@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crypto JS</title>
+    <script type="text/javascript" src="library/crypto-js.min.js"></script>
+    <script type="text/javascript" src="library/axios.min.js"></script>
+    <script type="text/javascript" src="walletsdk.js"></script>
+    <script type="text/javascript">
+        const sdk = new WalletSDK("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr")
+        function getPlatformAssets(){
+            sdk.api.getPlatformAssets().then(value => console.log(value))
+        }
+        function getAssetInfo(){
+            sdk.api.getAssetInfo("0x5f26fc8ad453fd18694840b6ae04383a08ce7fbe").then(value => console.log(value))
+        }
+    </script>
+</head>
+<body>
+<div>
+    <button onclick="getPlatformAssets()">getPlatformAssets</button>
+    <button onclick="getAssetInfo()">getAssetInfo</button>
+</div>
+</body>
+</html>
