@@ -183,6 +183,16 @@ class WalletSDK
         return false;
     }
 
+    /**
+     * 发布资产
+     * @param string $symbol 资产名（只能使用字母）
+     * @param string $name 资产别名（可以用中文0
+     * @param string $total 发布数量
+     * @param string $logo 资产logo
+     * @param string $introduce 资产介绍
+     * @param string $whiteBook 白皮书
+     * @return bool 调用远程接口是否成功
+     */
     function publish(string $symbol, string $name, string $total, string $logo, string $introduce, string $whiteBook): bool
     {
         $data = array(
@@ -197,6 +207,15 @@ class WalletSDK
         return $response->isSuccessful();
     }
 
+    /**
+     * 转帐
+     * @param string $contract 资产合约地址
+     * @param string $from 付款地址
+     * @param string $to 收款地址
+     * @param string $amount 转帐数量
+     * @param string $remark 备注
+     * @return bool 调用远程接口是否成功
+     */
     function transfer(string $contract, string $from, string $to, string $amount, string $remark): bool
     {
         $data = array(
@@ -210,6 +229,11 @@ class WalletSDK
         return $response->isSuccessful();
     }
 
+    /**
+     * 注册平台用户
+     * @param string $uid 该平台用户唯一标识，不能重复
+     * @return string|null 该用户钱包地址
+     */
     function registerUser(string $uid): ?string
     {
         $response = $this->postJson("$this->baseUrl/platform/registerUser", array("uid" => $uid));
@@ -220,6 +244,14 @@ class WalletSDK
         return null;
     }
 
+    /**
+     * 操作指定钱包资产数量
+     * @param string $wallet 指定的钱包地址
+     * @param string $contract 指定的合约地址
+     * @param string $action 0: 解除冻结, 1: 冻结
+     * @param string $amount 解除冻结或者冻结数量
+     * @return bool 调用远程接口是否成功
+     */
     function updateWalletAssetStatus(string $wallet, string $contract, string $action, string $amount): bool
     {
         $data = array(
@@ -232,6 +264,10 @@ class WalletSDK
         return $response->isSuccessful();
     }
 
+    /**
+     * 获取平台信息
+     * @return Platform|null 平台信息封装对象
+     */
     function getPlatformInfo(): ?Platform
     {
         $response = $this->get("$this->baseUrl/platform/info", null);
@@ -245,10 +281,11 @@ class WalletSDK
     }
 
     /**
+     * 获取平台资产列表
+     * @return array 平台资产列表
      * if($asset instanceof Asset){
      *   printf($asset->symbol);
      * }
-     * @return array
      */
     function getPlatformAssets(): array
     {
@@ -265,6 +302,14 @@ class WalletSDK
         return $assets;
     }
 
+    /**
+     * 获取指定钱包资产变动记录
+     * @param string $address 要获取的钱包地址
+     * @param string $contract 合约地址, 不传则是平台下的所有资产变动
+     * @param int $page 页码，1开始
+     * @param int $limit 每页数量
+     * @return array 资产变动列表
+     */
     function getWalletAssetLog(string $address, string $contract, int $page, int $limit): array
     {
         $response = $this->get("$this->baseUrl/platform/asset/userAssetLog", array(
@@ -285,6 +330,11 @@ class WalletSDK
         return $assets;
     }
 
+    /**
+     * 获取指定钱包持有资产列表
+     * @param string $address 指定的钱包地址
+     * @return array 资产列表
+     */
     function getWalletAssets(string $address): array
     {
         $response = $this->get("$this->baseUrl/platform/asset/listUserAssets", array("address" => $address));
@@ -300,6 +350,12 @@ class WalletSDK
         return $assets;
     }
 
+    /**
+     * 获取指定钱包指定资产持有信息
+     * @param string $address 指定的钱包地址
+     * @param string $contract 指定的合约地址
+     * @return Asset|null 资产信息
+     */
     function getWalletAsset(string $address, string $contract): ?Asset
     {
         $response = $this->get("$this->baseUrl/platform/asset/userAsset", array(
@@ -313,6 +369,11 @@ class WalletSDK
         return null;
     }
 
+    /**
+     * 获取资产详情
+     * @param string $contract 指定的合约地址
+     * @return Asset|null 资产详情
+     */
     function getAssetInfo(string $contract): ?Asset
     {
         $response = $this->get("$this->baseUrl/platform/asset/info", array("contract" => $contract));

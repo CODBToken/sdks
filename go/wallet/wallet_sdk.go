@@ -204,6 +204,14 @@ func (api *Api) getToken() *result {
 	return nil
 }
 
+// Publish 发布资产
+// @param symbol 资产名（只能使用字母）
+// @param name 资产别名（可以用中文0
+// @param total 发布数量
+// @param logo 资产logo
+// @param introduce 资产介绍
+// @param whiteBook 白皮书
+// @return 调用远程接口是否成功
 func (api *Api) Publish(symbol string, name string, total string, logo string, introduce string, whiteBook string) bool {
 	data := api.postJson(api.url("/platform/publish"), map[string]string{
 		"symbol":    symbol,
@@ -223,6 +231,13 @@ func (api *Api) Publish(symbol string, name string, total string, logo string, i
 	return false
 }
 
+// Transfer 转帐
+// @param contract 资产合约地址
+// @param from 付款地址
+// @param to 收款地址
+// @param amount 转帐数量
+// @param remark 备注
+// @return 调用远程接口是否成功
 func (api *Api) Transfer(contract string, from string, to string, amount string, remark string) bool {
 	data := api.postJson(api.url("/platform/asset/transfer"), map[string]string{
 		"contract": contract,
@@ -241,6 +256,9 @@ func (api *Api) Transfer(contract string, from string, to string, amount string,
 	return false
 }
 
+// RegisterUser 注册平台用户
+// @param uid 该平台用户唯一标识，不能重复
+// @return 该用户钱包地址
 func (api *Api) RegisterUser(uid string) *string {
 	data := api.postJson(api.url("/platform/registerUser"), map[string]string{"uid": uid}, true)
 	if data != nil {
@@ -258,6 +276,12 @@ func (api *Api) RegisterUser(uid string) *string {
 	return nil
 }
 
+// UpdateWalletAssetStatus 操作指定钱包资产数量
+// @param wallet 指定的钱包地址
+// @param contract 指定的合约地址
+// @param action 0: 解除冻结, 1: 冻结
+// @param amount 解除冻结或者冻结数量
+// @return 调用远程接口是否成功
 func (api *Api) UpdateWalletAssetStatus(wallet string, contract string, action int, amount string) bool {
 	data := api.postJson(api.url("/platform/asset/updateUserAssetStatus"), map[string]interface{}{
 		"contract": contract,
@@ -275,6 +299,8 @@ func (api *Api) UpdateWalletAssetStatus(wallet string, contract string, action i
 	return false
 }
 
+// GetPlatformInfo 获取平台信息
+// @return 平台信息封装对象
 func (api *Api) GetPlatformInfo() *Platform {
 	data := api.get(api.url("/platform/info"), nil, true)
 	if data != nil {
@@ -286,6 +312,8 @@ func (api *Api) GetPlatformInfo() *Platform {
 	return nil
 }
 
+// GetPlatformAssets 获取平台资产列表
+// @return 平台资产列表
 func (api *Api) GetPlatformAssets() []*Asset {
 	data := api.get(api.url("/platform/asset/listPlatformAssets"), nil, true)
 	if data != nil {
@@ -298,6 +326,12 @@ func (api *Api) GetPlatformAssets() []*Asset {
 	return nil
 }
 
+// GetWalletAssetLog 获取指定钱包资产变动记录
+// @param address 要获取的钱包地址
+// @param contract 合约地址, 不传则是平台下的所有资产变动
+// @param page 页码，1开始
+// @param limit 每页数量
+// @return 资产变动列表
 func (api *Api) GetWalletAssetLog(address string, contract string, page int, limit int) []*Asset {
 	data := api.get(api.url("/platform/asset/userAssetLog"), map[string]string{
 		"address":  address,
@@ -314,6 +348,9 @@ func (api *Api) GetWalletAssetLog(address string, contract string, page int, lim
 	return nil
 }
 
+// GetWalletAssets 获取指定钱包持有资产列表
+// @param address 指定的钱包地址
+// @return 资产列表
 func (api *Api) GetWalletAssets(address string) []*Asset {
 	data := api.get(api.url("/platform/asset/listUserAssets"), map[string]string{"address": address}, true)
 	if data != nil {
@@ -325,6 +362,10 @@ func (api *Api) GetWalletAssets(address string) []*Asset {
 	return nil
 }
 
+// GetWalletAsset 获取指定钱包指定资产持有信息
+// @param address 指定的钱包地址
+// @param contract 指定的合约地址
+// @return 资产信息
 func (api *Api) GetWalletAsset(address string, contract string) *Asset {
 	data := api.get(api.url("/platform/asset/userAsset"), map[string]string{"address": address, "contract": contract}, true)
 	if data != nil {
@@ -336,6 +377,9 @@ func (api *Api) GetWalletAsset(address string, contract string) *Asset {
 	return nil
 }
 
+// GetAssetInfo 获取资产详情
+// @param contract 指定的合约地址
+// @return 资产详情
 func (api *Api) GetAssetInfo(contract string) *Asset {
 	data := api.get(api.url("/platform/asset/info"), map[string]string{"contract": contract}, true)
 	if data != nil {

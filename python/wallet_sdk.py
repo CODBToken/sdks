@@ -94,44 +94,127 @@ class Api:
     def __init__(self, sdk):
         self.__http = Http(sdk)
 
+    '''
+    /**
+     * 发布资产
+     * @param string symbol 资产名（只能使用字母）
+     * @param string name 资产别名（可以用中文0
+     * @param string total 发布数量
+     * @param string logo 资产logo
+     * @param string introduce 资产介绍
+     * @param string whiteBook 白皮书
+     */
+    '''
+
     def publish(self, symbol, name, total, logo, introduce, white_book):
         data = {"symbol": symbol, "name": name, "total": total, "logo": logo, "introduce": introduce, "whiteBook": white_book}
         return self.__http.post_json("/platform/publish", data)
+
+    '''
+    /**
+     * 转帐
+     * @param string contract 资产合约地址
+     * @param string _from 付款地址
+     * @param string to 收款地址
+     * @param string amount 转帐数量
+     * @param string remark 备注
+     */
+    '''
 
     def transfer(self, contract, _from, to, amount, remark):
         data = {"contract": contract, "from": _from, "to": to, "amount": amount, "remark": remark}
         return self.__http.post_json("/platform/asset/transfer", data)
 
+    '''
+    /**
+     * 操作指定钱包资产数量
+     * @param string wallet 指定的钱包地址
+     * @param string contract 指定的合约地址
+     * @param string action 0: 解除冻结, 1: 冻结
+     * @param string amount 解除冻结或者冻结数量
+     */
+    '''
+
     def update_wallet_asset_status(self, wallet, contract, action, amount):
         data = {"wallet": wallet, "contract": contract, "action": action, "amount": amount}
         return self.__http.post_json("/platform/asset/updateUserAssetStatus", data)
+
+    '''
+    /**
+     * 注册平台用户
+     * @param string uid 该平台用户唯一标识，不能重复
+     */
+    '''
 
     def register_user(self, uid):
         data = {"uid": uid}
         return self.__http.post_json("/platform/registerUser", data)
 
+    '''
+    /**
+     * 获取平台资产列表
+     */
+    '''
+
     def get_platform_assets(self):
         return self.__http.get("/platform/asset/listPlatformAssets")
 
+    '''
+    /**
+     * 获取平台信息
+     */
+    '''
+
     def get_platform_info(self):
         return self.__http.get("/platform/info")
+
+    '''
+    /**
+     * 获取指定钱包持有资产列表
+     * @param string address 指定的钱包地址
+     */
+    '''
 
     def get_wallet_assets(self, address):
         data = {"address": address}
         return self.__http.get("/platform/asset/listUserAssets", data)
 
+    '''
+    /**
+     * 获取指定钱包指定资产持有信息
+     * @param string address 指定的钱包地址
+     * @param string contract 指定的合约地址
+     */
+    '''
+
     def get_wallet_asset(self, address, contract):
         data = {"address": address, "contract": contract}
         return self.__http.get("/platform/asset/userAsset", data)
+
+    '''
+    /**
+     * 获取指定钱包资产变动记录
+     * @param string address 要获取的钱包地址
+     * @param string contract 合约地址, 不传则是平台下的所有资产变动
+     * @param int page 页码，1开始
+     * @param int limit 每页数量
+     */
+    '''
 
     def get_wallet_asset_log(self, address, contract, page, limit):
         data = {"address": address, "contract": contract, "page": page, "limit": limit}
         return self.__http.get("/platform/asset/userAssetLog", data)
 
+    '''
+    /**
+     * 获取资产详情
+     * @param string contract 指定的合约地址
+     */
+    '''
+
     def get_asset_info(self, contract):
         data = {"contract": contract}
         return self.__http.get("/platform/asset/info", data)
-
 
 # if __name__ == "__main__":
 #     api = WalletSDK("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr").get_api()
