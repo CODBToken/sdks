@@ -118,11 +118,15 @@ class Api:
      * @param string to 收款地址
      * @param string amount 转帐数量
      * @param string remark 备注
+     * @param string gas_contract 平台收费使用的资产
+     * @param string gas_fee 费用
      */
     '''
 
-    def transfer(self, contract, _from, to, amount, remark):
+    def transfer(self, contract, _from, to, amount, remark, gas_contract, gas_fee):
         data = {"contract": contract, "from": _from, "to": to, "amount": amount, "remark": remark}
+        if gas_contract and gas_fee:
+            data["gas"] = {"contract": gas_contract, "free": gas_fee}
         return self.__http.post_json("/platform/asset/transfer", data)
 
     '''
@@ -218,7 +222,7 @@ class Api:
 
 # if __name__ == "__main__":
 #     api = WalletSDK("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr").get_api()
-#     resp = api.get_platform_assets()
+#     resp = api.transfer("contract", "_from", "to", "amount", "remark", "gas_contract", "gas_fee")
 #     print(resp)
 #     resp = api.get_wallet_asset_log("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", 1, 3)
 #     print(resp)

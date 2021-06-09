@@ -99,6 +99,7 @@ func (api *Api) postJson(_url string, body interface{}, retry bool) []byte {
 		}
 	} else {
 		buffer, _ := json.Marshal(body)
+		println(string(buffer))
 		if strings.HasSuffix(_url, "platform/token") {
 			reader = strings.NewReader(string(buffer))
 		} else {
@@ -237,15 +238,24 @@ func (api *Api) Publish(symbol string, name string, total string, logo string, i
 // @param to 收款地址
 // @param amount 转帐数量
 // @param remark 备注
+// @param gasContract 平台收费使用的资产
+// @param gasFee 费用
 // @return 调用远程接口是否成功
-func (api *Api) Transfer(contract string, from string, to string, amount string, remark string) bool {
-	data := api.postJson(api.url("/platform/asset/transfer"), map[string]string{
+func (api *Api) Transfer(contract string, from string, to string, amount string, remark string, gasContract string, gasFee string) bool {
+	params := map[string]interface{}{
 		"contract": contract,
 		"from":     from,
 		"to":       to,
 		"amount":   amount,
 		"remark":   remark,
-	}, true)
+	}
+	if len(gasContract) > 0 && len(gasFee) > 0 {
+		params["gas"] = map[string]string{
+			"contract": gasContract,
+			"free": gasFee,
+		}
+	}
+	data := api.postJson(api.url("/platform/asset/transfer"), params, true)
 	if data != nil {
 		var result = &result{}
 		_ = json.Unmarshal(data, result)

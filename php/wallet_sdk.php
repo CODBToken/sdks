@@ -214,9 +214,11 @@ class WalletSDK
      * @param string $to 收款地址
      * @param string $amount 转帐数量
      * @param string $remark 备注
+     * @param string $gasContract 平台收费使用的资产
+     * @param string $gasFee 费用
      * @return bool 调用远程接口是否成功
      */
-    function transfer(string $contract, string $from, string $to, string $amount, string $remark): bool
+    function transfer(string $contract, string $from, string $to, string $amount, string $remark, string $gasContract, string $gasFee): bool
     {
         $data = array(
             "contract" => $contract,
@@ -225,6 +227,12 @@ class WalletSDK
             "amount" => $amount,
             "remark" => $remark
         );
+        if ($gasContract && $gasFee) {
+            $data["gas"] = array(
+                "contract" => $gasContract,
+                "free" => $gasFee
+            );;
+        }
         $response = $this->postJson("$this->baseUrl/platform/asset/transfer", $data);
         return $response->isSuccessful();
     }
@@ -456,7 +464,7 @@ class Asset
 }
 
 //$api = WalletSDK::create("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr");
-//$assets = $api->getWalletAssetLog("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", 2, 3);
+//$assets = $api->transfer("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", "2", "3", "", "xx", "xxx");
 //foreach ($assets as $asset) {
 //    if ($asset instanceof Asset) {
 //        printf("$asset->number \r\n");

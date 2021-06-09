@@ -33,17 +33,26 @@ class Api internal constructor(private val service: ApiService) {
      * @param to 收款地址
      * @param amount 转帐数量
      * @param remark 备注
+     * @param gasContract 平台收费使用的资产
+     * @param gasFee 费用
      * @return 调用远程接口是否成功
      */
-    fun transfer(contract: String, from: String, to: String, amount: BigDecimal, remark: String) = service.transfer(
-        mapOf(
+    fun transfer(contract: String, from: String, to: String, amount: BigDecimal, remark: String,  gasContract: String?, gasFee: String?){
+        val params = mutableMapOf<String, Any?>(
             "contract" to contract,
             "from" to from,
             "to" to to,
             "amount" to amount,
             "remark" to remark,
         )
-    )
+        if(gasContract != null && gasFee != null){
+            params["gas"] = mapOf<String, Any?>(
+                "contract" to gasContract,
+                "free" to gasFee,
+            )
+        }
+        service.transfer(params)
+    }
 
     /**
      * 操作指定钱包资产数量

@@ -124,10 +124,15 @@ const Api = function (sdk, axios) {
      * @param to 收款地址
      * @param amount 转帐数量
      * @param remark 备注
+     * @param gasContract 平台收费使用的资产
+     * @param gasFee 费用
      * @return 调用远程接口是否成功
      */
-    this.transfer = function (contract, from, to, amount, remark) {
+    this.transfer = function (contract, from, to, amount, remark, gasContract, gasFee) {
         const data = {"contract": contract, "from": from, "to": to, "amount": amount, "remark": remark};
+        if(gasContract && gasFee){
+            data["gas"] = {"contract": gasContract, "free": gasFee}
+        }
         return axios.httpPostJson("/platform/asset/transfer", data);
     }
 
