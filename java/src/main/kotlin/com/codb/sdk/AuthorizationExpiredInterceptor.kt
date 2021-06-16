@@ -5,7 +5,6 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
-import java.util.concurrent.locks.ReentrantLock
 
 internal class AuthorizationExpiredInterceptor : Interceptor {
 
@@ -14,7 +13,7 @@ internal class AuthorizationExpiredInterceptor : Interceptor {
     private var token: String = ""
     var apiService: ApiService? = null
     var platform: Platform? = null
-    private val lock = ReentrantLock()
+    private var refreshTime = 0L
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var origin = chain.request()
@@ -22,12 +21,7 @@ internal class AuthorizationExpiredInterceptor : Interceptor {
             return chain.proceed(origin)
         }
         try {
-            if (lock.isLocked) {
-                logger.warn("等待token刷新")
-                lock.lock()
-            }
             origin = if (token.isEmpty()) {
-                lock.lock()
                 val builder = origin.newBuilder()
                 updateAuthorization(chain, builder)
                 builder.build()
@@ -36,7 +30,6 @@ internal class AuthorizationExpiredInterceptor : Interceptor {
             }
             var response = chain.proceed(origin)
             if (isExpired(response)) {
-                lock.lock()
                 logger.warn("token expired")
                 val expiredRequestBuilder = origin.newBuilder()
                 logger.info("refresh token")
@@ -50,10 +43,6 @@ internal class AuthorizationExpiredInterceptor : Interceptor {
             return response
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            if (lock.isLocked) {
-                lock.unlock()
-            }
         }
         return chain.proceed(origin)
     }
@@ -71,12 +60,19 @@ internal class AuthorizationExpiredInterceptor : Interceptor {
      */
     @Synchronized
     private fun updateAuthorization(chain: Interceptor.Chain, expiredRequestBuilder: Request.Builder): Boolean {
+        val time = System.currentTimeMillis() - refreshTime
+        if (time <= 60000) {
+            expiredRequestBuilder.header("token", token)
+            return true
+        }
+        logger.warn("刷新token")
         val response = apiService?.getToken(mapOf("no" to platform?.no, "accessKey" to platform?.accessKey))?.execute()?.body()
         if (response != null && response.isSuccessful()) {
             val data = response.data
             if (data != null) {
                 expiredRequestBuilder.header("token", data.token)
                 this.token = data.token
+                refreshTime = System.currentTimeMillis()
                 return true
             }
         }

@@ -289,6 +289,25 @@ class WalletSDK
     }
 
     /**
+     * 获取平台用户信息
+     * @param string $uid 平台用户ID
+     * @return object 平台用户信息
+     */
+    function getPlatformUserInfo(string $uid): ?object
+    {
+        $response = $this->get("$this->baseUrl/platform/platformUserInfo", array(
+            "uid" => $uid,
+        ));
+        if ($response->isSuccessful()) {
+            $data = $response->getDecryptData($this->secretKey);
+            if (is_object($data)) {
+                return (object) $data;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 获取平台资产列表
      * @return array 平台资产列表
      * if($asset instanceof Asset){
@@ -429,7 +448,8 @@ class Asset
     var $logo;
     var $number;
     var $total;
-    var $freezeNumber;
+    var $freezeNumber; //冻结总数量
+    var $useFreezeNumber; //质押数量
     var $introduce;
     var $whiteBook;
     var $status;
@@ -451,6 +471,7 @@ class Asset
         $asset->number = $data->number;
         $asset->total = $data->total;
         $asset->freezeNumber = $data->freezeNumber;
+        $asset->useFreezeNumber = $data->useFreezeNumber;
         $asset->introduce = $data->introduce;
         $asset->whiteBook = $data->whiteBook;
         $asset->status = $data->status;
@@ -463,7 +484,8 @@ class Asset
     }
 }
 
-//$api = WalletSDK::create("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr");
+//$api = WalletSDK::create("", "", "");
+//print($api->getPlatformUserInfo("oapfJ5aJY_iWpl_mo3ZP0eH3-XSI")->wallet);
 //$assets = $api->transfer("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", "2", "3", "", "xx", "xxx");
 //foreach ($assets as $asset) {
 //    if ($asset instanceof Asset) {

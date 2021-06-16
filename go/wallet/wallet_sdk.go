@@ -54,18 +54,18 @@ type Platform struct {
 
 type Asset struct {
 	Symbol string `json:"symbol,omitempty"`
-	//@SerializedName("contract", alternate = ["contractAddress"])
-	Contract     string      `json:"contract,contractAddress,omitempty"`
-	Name         string      `json:"name,omitempty"`
-	Logo         string      `json:"logo,omitempty"`
-	Number       json.Number `json:"number,omitempty"`
-	Total        json.Number `json:"total,omitempty"`
-	FreezeNumber json.Number `json:"freezeNumber,omitempty"`
-	Introduce    string      `json:"introduce,omitempty"`
-	WhiteBook    string      `json:"whiteBook,omitempty"`
-	Status       int         `json:"status,omitempty"`
-	UpdateTime   string      `json:"updateTime,omitempty"`
-	CreateTime   string      `json:"createTime,omitempty"`
+	Contract        string      `json:"contract,omitempty"` //合约地址
+	Name            string      `json:"name,omitempty"`
+	Logo            string      `json:"logo,omitempty"`
+	Number          json.Number `json:"number,omitempty"`
+	Total           json.Number `json:"total,omitempty"`
+	FreezeNumber    json.Number `json:"freezeNumber,omitempty"` //冻结总数量
+	UseFreezeNumber json.Number `json:"useFreezeNumber,omitempty"` //质押数量
+	Introduce       string      `json:"introduce,omitempty"`
+	WhiteBook       string      `json:"whiteBook,omitempty"`
+	Status          int         `json:"status,omitempty"`
+	UpdateTime      string      `json:"updateTime,omitempty"`
+	CreateTime      string      `json:"createTime,omitempty"`
 
 	From   string `json:"from,omitempty"`
 	To     string `json:"to,omitempty"`
@@ -140,9 +140,11 @@ func (api *Api) get(_url string, query map[string]string, retry bool) []byte {
 		return nil
 	}
 	if query != nil {
+		q := url_.Query()
 		for key := range query {
-			url_.Query().Add(key, query[key])
+			q.Add(key, query[key])
 		}
+		url_.RawQuery = q.Encode()
 	}
 	req, _ := http.NewRequest("GET", url_.String(), nil)
 	if api.token != nil {
@@ -252,7 +254,7 @@ func (api *Api) Transfer(contract string, from string, to string, amount string,
 	if len(gasContract) > 0 && len(gasFee) > 0 {
 		params["gas"] = map[string]string{
 			"contract": gasContract,
-			"free": gasFee,
+			"free":     gasFee,
 		}
 	}
 	data := api.postJson(api.url("/platform/asset/transfer"), params, true)
@@ -317,6 +319,20 @@ func (api *Api) GetPlatformInfo() *Platform {
 		var platform = &Platform{}
 		if api.unmarshal(data, platform) {
 			return platform
+		}
+	}
+	return nil
+}
+
+// GetPlatformUserInfo 获取平台用户信息
+// @param uid 平台用户ID
+// @return 平台用户信息
+func (api *Api) GetPlatformUserInfo(uid string) map[string]string {
+	data := api.get(api.url("/platform/platformUserInfo"), map[string]string{"uid": uid}, true)
+	if data != nil {
+		account := make(map[string]string)
+		if api.unmarshal(data, &account) {
+			return account
 		}
 	}
 	return nil

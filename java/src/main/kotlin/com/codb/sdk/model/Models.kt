@@ -31,7 +31,6 @@ data class Token(
 @NoArgOpenDataClass
 data class Asset(
     var symbol: String,
-    @SerializedName("contract", alternate = ["contractAddress"])
     var contract: String,
     var name: String,
     var logo: String,

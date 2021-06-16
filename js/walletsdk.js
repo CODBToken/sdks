@@ -160,6 +160,16 @@ const Api = function (sdk, axios) {
     }
 
     /**
+     * 获取平台用户信息
+     * @param uid 该平台用户ID
+     * @return 平台用户信息
+     */
+    this.getPlatformUserInfo = function (uid) {
+        const data = {"uid": uid};
+        return axios.httpGet("/platform/platformUserInfo", data);
+    }
+
+    /**
      * 获取平台信息
      * @return 平台信息封装对象
      */

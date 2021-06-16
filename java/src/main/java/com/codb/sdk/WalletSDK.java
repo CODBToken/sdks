@@ -15,8 +15,8 @@ public final class WalletSDK {
     public static Api create(String no, String accessKey, String secretKey) {
         Platform platform = new Platform(no, accessKey, secretKey);
         Logger logger = LoggerFactory.getLogger("OkHttp");
-//        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(logger::info);
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(System.out::println);
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(logger::info);
+//        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(System.out::println);
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         SSLSocketFactory factory = SSLFactory.create();

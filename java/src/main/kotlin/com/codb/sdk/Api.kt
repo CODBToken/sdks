@@ -24,7 +24,7 @@ class Api internal constructor(private val service: ApiService) {
             "introduce" to introduce,
             "whiteBook" to whiteBook
         )
-    )
+    ).execute().body()
 
     /**
      * 转帐
@@ -37,7 +37,7 @@ class Api internal constructor(private val service: ApiService) {
      * @param gasFee 费用
      * @return 调用远程接口是否成功
      */
-    fun transfer(contract: String, from: String, to: String, amount: BigDecimal, remark: String,  gasContract: String?, gasFee: String?){
+    fun transfer(contract: String, from: String, to: String, amount: BigDecimal, remark: String,  gasContract: String?, gasFee: String?): ApiResponse<Any?>?{
         val params = mutableMapOf<String, Any?>(
             "contract" to contract,
             "from" to from,
@@ -51,7 +51,7 @@ class Api internal constructor(private val service: ApiService) {
                 "free" to gasFee,
             )
         }
-        service.transfer(params)
+        return service.transfer(params).execute().body()
     }
 
     /**
@@ -69,7 +69,7 @@ class Api internal constructor(private val service: ApiService) {
             "action" to action,
             "amount" to amount,
         )
-    )
+    ).execute().body()
 
     /**
      * 注册平台用户
@@ -85,6 +85,13 @@ class Api internal constructor(private val service: ApiService) {
      * @return 平台信息封装对象
      */
     fun getPlatformInfo() = service.getPlatformInfo().execute().body()
+
+    /**
+     * 获取平台用户信息
+     * @param uid 平台用户ID
+     * @return 平台用户信息
+     */
+    fun getPlatformUserInfo(uid: String) = service.getPlatformUserInfo(uid).execute().body()
 
     /**
      * 获取平台资产列表

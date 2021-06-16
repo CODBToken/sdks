@@ -174,6 +174,17 @@ class Api:
 
     '''
     /**
+     * 获取平台用户信息
+     * @param string uid 平台用户ID
+     */
+    '''
+
+    def get_platform_user_info(self, uid):
+        data = {"uid": uid}
+        return self.__http.get("/platform/platformUserInfo", data)
+
+    '''
+    /**
      * 获取指定钱包持有资产列表
      * @param string address 指定的钱包地址
      */
@@ -221,7 +232,7 @@ class Api:
         return self.__http.get("/platform/asset/info", data)
 
 # if __name__ == "__main__":
-#     api = WalletSDK("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr").get_api()
+#     api = WalletSDK("", "", "").get_api()
 #     resp = api.transfer("contract", "_from", "to", "amount", "remark", "gas_contract", "gas_fee")
 #     print(resp)
 #     resp = api.get_wallet_asset_log("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", 1, 3)

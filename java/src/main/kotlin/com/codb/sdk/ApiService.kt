@@ -16,10 +16,10 @@ internal interface ApiService {
     fun getToken(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>): Call<ApiResponse<Token>>
 
     @POST("platform/publish")
-    fun publish(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>)
+    fun publish(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>): Call<ApiResponse<Any?>>
 
     @POST("platform/asset/transfer")
-    fun transfer(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>)
+    fun transfer(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>): Call<ApiResponse<Any?>>
 
     @POST("platform/registerUser")
     fun registerUser(@Body body: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards Any?>): Call<ApiResponse<String>>
@@ -29,6 +29,9 @@ internal interface ApiService {
 
     @GET("platform/info")
     fun getPlatformInfo(): Call<ApiResponse<Platform>>
+
+    @GET("platform/platformUserInfo")
+    fun getPlatformUserInfo(@Query("uid") uid: String): Call<ApiResponse<Any?>>
 
     @GET("platform/asset/listPlatformAssets")
     fun getPlatformAssets(): Call<ApiResponse<List<Asset>>>

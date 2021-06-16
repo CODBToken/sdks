@@ -11,7 +11,7 @@ class Test {
 
     @BeforeAll
     fun testBefore() {
-        api = WalletSDK.create("21444693860123649", "CBrfEyXqoCzbhefryT3SJDibk3LO6R22", "xXmuje09VreuP3hB")
+        api = WalletSDK.create("", "", "")
     }
 
     @Test
@@ -32,6 +32,12 @@ class Test {
     @Test
     fun getWalletAssets() {
         Assertions.assertTrue(api.getWalletAssets("0x5f26fc8ad453fd18694840b6ae04383a08ce7fbe")?.isSuccessful() ?: false)
+    }
+
+    @Test
+    fun getPlatformUserInfo(){
+        val result = api.getPlatformUserInfo("oapfJ5aJY_iWpl_mo3ZP0eH3-XSI")
+        println(result?.data)
     }
 
 }
