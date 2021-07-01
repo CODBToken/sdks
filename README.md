@@ -1,4 +1,5 @@
-# sdks
+## 警告!! 警告!! 警告!!
+### `WalletSDK`应在全局上下文存在一个一个api实例，请不要多次`create`创建，否则触发系统风控被封IP
 
 ## 如果在开发过程中有发现sdk的bug, 欢迎提交 pull request
 
@@ -25,6 +26,3 @@
 ### Java接入方式 [源码](java/src/main/kotlin/com/codb/sdk/Api.kt)
 1. `api = WalletSDK.create("平台号", "访问密钥", "安全密钥")`
 2. `api.相关方法`
-
-## 警告!! 警告!! 警告!!
-### `WalletSDK`应在全局上下文存在一个一个api实例，请不要多次`create`创建，否则很可能被系统封IP
