@@ -10,13 +10,12 @@ const ApiResponse = function (code, data, message) {
 const AxiosEngine = function (sdk) {
     this.requests = [];
     this.isRefreshing = false;
-    this.token = "";
     this.axios = axios.create({
         baseURL: "https://wallet.codbtoken.com/api",
     });
     this.axios.interceptors.request.use(
         (config) => {
-            config.headers["token"] = this.token
+            config.headers["token"] = sessionStorage.getItem("token")
             if (config.method === "POST" && config.data && config.url !== "/platform/token") {
                 config.data = this.encrypt(sdk.secretKey, JSON.stringify(config.data))
             }
@@ -95,7 +94,7 @@ const Api = function (sdk, axios) {
         const data = {"no": sdk.no, "accessKey": sdk.accessKey};
         axios.httpPostJson("/platform/token", data).then((response) => {
             if (response.isSuccessful()) {
-                axios.token = response.data.token;
+                sessionStorage.setItem("token", response.data.token)
             }
         }).finally(() => {
             axios.isRefreshing = false;

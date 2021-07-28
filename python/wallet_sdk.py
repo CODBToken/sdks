@@ -19,7 +19,7 @@ class Http:
 
     def get(self, path, params=None):
         headers = {
-            "token": self.__token
+            "token": self.__read_token()
         }
         response = requests.get(url=self.__sdk.base_url + path, params=params, headers=headers)
         if response.status_code == 401 and self.__update_token():
@@ -33,7 +33,7 @@ class Http:
 
     def post_json(self, path, json_data):
         headers = {
-            "token": self.__token,
+            "token": self.__read_token(),
             "Content-Type": "application/json"
         }
         body = json_data
@@ -73,14 +73,36 @@ class Http:
         data = self.post_json("/platform/token", data)
         if data["code"] == 200:
             new_token = data["data"]["token"]
-            self.__token = new_token
+            self.__save_token(new_token)
             return True
+        print(data)
         return False
+
+    def __read_token(self):
+        file_name = ".token"
+        try:
+            file = open(file_name, "r+")
+        except FileNotFoundError:
+            return ""
+        else:
+            token = file.read()
+            file.close()
+            return token
+
+    def __save_token(self, token):
+        file_name = ".token"
+        try:
+            file = open(file_name, "w+")
+        except FileExistsError:
+            return
+        else:
+            file.write(token)
+            file.close()
 
 
 class WalletSDK:
     def __init__(self, no, access_key, secret_key):
-        self.base_url = "https://wallet.codbtoken.com/api"
+        self.base_url = "http://localhost:8080/api"
         self.no = no
         self.access_key = access_key
         self.secret_key = secret_key
@@ -231,9 +253,8 @@ class Api:
         data = {"contract": contract}
         return self.__http.get("/platform/asset/info", data)
 
-# if __name__ == "__main__":
-#     api = WalletSDK("", "", "").get_api()
-#     resp = api.transfer("contract", "_from", "to", "amount", "remark", "gas_contract", "gas_fee")
-#     print(resp)
-#     resp = api.get_wallet_asset_log("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", 1, 3)
-#     print(resp)
+
+if __name__ == "__main__":
+    api = WalletSDK("21444697862578557", "UFvrZDy2u9EBOcY43aHD1vE6v7ABXw4H", "m8V9n9GLzkh3ZKRr").get_api()
+    resp = api.get_wallet_asset_log("0x4cb89ac30f2342c89ca4025ba474083f4f205ca0", "0x3e754484ea14f521b02738c2aede37b527c4283d", 1, 3)
+    print(resp)

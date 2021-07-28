@@ -62,7 +62,6 @@ class WalletSDK
     protected $accessKey;
     protected $secretKey;
     private $baseUrl = "https://wallet.codbtoken.com/api";
-    private $token;
 
     private function __construct($no, $accessKey, $secretKey)
     {
@@ -81,7 +80,7 @@ class WalletSDK
         $ch = null;
         $ret = null;
         $header = array();
-        $header[] = 'token: ' . $this->token;
+        $header[] = 'token: ' . $this->readToken();
         if ('POST' === strtoupper($method)) {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_POST, true);
@@ -171,13 +170,39 @@ class WalletSDK
         return $this->sendRequest($url, $data, "POST", "application/json");
     }
 
+    private function readToken(): string
+    {
+        $file = ".token";
+        if (file_exists($file)) {
+            $resource = fopen($file, "r+");
+            if ($resource) {
+                $token = fread($resource, filesize($file));
+                fclose($resource);
+                if ($token) {
+                    return $token;
+                }
+            }
+        }
+        return "";
+    }
+
+    private function saveToken(string $token)
+    {
+        $file = ".token";
+        $resource = fopen($file, "w+");
+        if ($resource) {
+            fwrite($resource, $token);
+            fclose($resource);
+        }
+    }
+
     private function updateToken(): bool
     {
         $data = array("no" => $this->no, "accessKey" => $this->accessKey);
         $response = $this->postJson("$this->baseUrl/platform/token", $data, false);
         if ($response->isSuccessful()) {
             if (is_object($response->data())) {
-                $this->token = $response->data()->token;
+                $this->saveToken($response->data()->token);
             }
         }
         return false;
@@ -301,7 +326,7 @@ class WalletSDK
         if ($response->isSuccessful()) {
             $data = $response->getDecryptData($this->secretKey);
             if (is_object($data)) {
-                return (object) $data;
+                return (object)$data;
             }
         }
         return null;
